@@ -5097,6 +5097,8 @@ static void set_prop_batt_health(struct smb_charger *chg, int batt_health)
 static void set_usb_switch(struct smb_charger *chg, bool enable)
 {
 	int retrger_time;
+	const union power_supply_propval otg_on = {1,};
+	const union power_supply_propval otg_off = {0,};
 
 	if (!fast_charger) {
 		pr_err("no fast_charger register found\n");

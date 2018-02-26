@@ -28,6 +28,9 @@
 #include <linux/state_notifier.h>
 #endif
 #include <linux/cpu_boost.h>
+#ifdef CONFIG_STATE_NOTIFIER
+#include <linux/state_notifier.h>
+#endif
 
 #include "../../kernel/sched/sched.h"
 

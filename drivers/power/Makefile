@@ -78,3 +78,5 @@ obj-$(CONFIG_POWER_SUPPLY)	+= supply/
 # TODO: remove me b/62057517
 subdir-ccflags-y += \
 	-Wno-tentative-definition-incomplete-type
+
+obj-y += smart_charge.o

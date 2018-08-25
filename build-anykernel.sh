@@ -82,6 +82,8 @@ function make_modules {
 	${CROSS_COMPILE}strip --strip-unneeded $MODULES_DIR/*.ko
 
 	# Sign modules
+	mkdir $KBUILD_OUTPUT/certs
+	cp ${KERNEL_DIR}/certs/signing_key.pem $KBUILD_OUTPUT/certs
 	find $MODULES_DIR -name '*.ko' -exec $KBUILD_OUTPUT/scripts/sign-file sha512 $KBUILD_OUTPUT/certs/signing_key.pem ${KERNEL_DIR}/certs/signing_key.x509 {} \;
 }
 

@@ -20,12 +20,12 @@ KERNEL="Image.gz-dtb"
 DEFCONFIG="oneplus5_defconfig"
 
 # Kernel Details
-VER=RenderZenith
+VER="RenderZenith v3.5.2"
 VARIANT="OP5-OOS-O-EAS"
 
 # Kernel zip name
 HASH=`git rev-parse --short=8 HEAD`
-KERNEL_ZIP="RZ-$VARIANT-$(date +%y%m%d)-$HASH" 
+KERNEL_ZIP="RenderZenith-$VARIANT-$(date +%y%m%d)-chandr1000-$HASH" 
 
 # Vars
 export LOCALVERSION=~`echo $VER`
@@ -38,7 +38,7 @@ export CCACHE=ccache
 
 # Paths
 KERNEL_DIR=`pwd`
-KBUILD_OUTPUT="${KERNEL_DIR}/out"
+KBUILD_OUTPUT="${HOME}/out"
 REPACK_DIR="${HOME}/android/source/kernel/AnyKernel2"
 PATCH_DIR="${HOME}/android/source/kernel/AnyKernel2/patch"
 MODULES_DIR="${HOME}/android/source/kernel/AnyKernel2/ramdisk/renderzenith/modules"
@@ -82,7 +82,7 @@ function make_modules {
 	${CROSS_COMPILE}strip --strip-unneeded $MODULES_DIR/*.ko
 
 	# Sign modules
-	find $MODULES_DIR -name '*.ko' -exec $KBUILD_OUTPUT/scripts/sign-file sha512 $KBUILD_OUTPUT/certs/signing_key.pem $KBUILD_OUTPUT/certs/signing_key.x509 {} \;
+	find $MODULES_DIR -name '*.ko' -exec $KBUILD_OUTPUT/scripts/sign-file sha512 $KBUILD_OUTPUT/certs/signing_key.pem ${KERNEL_DIR}/certs/signing_key.x509 {} \;
 }
 
 function make_zip {

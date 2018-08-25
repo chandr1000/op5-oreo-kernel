@@ -65,7 +65,6 @@ function clean_all {
 
 function make_kernel {
         echo
-        make CLANG_TRIPLE=aarch64-linux-gnu-
         make O=${KBUILD_OUTPUT} $DEFCONFIG
         make O=${KBUILD_OUTPUT} $THREAD
 }
@@ -83,6 +82,8 @@ function make_modules {
 	${CROSS_COMPILE}strip --strip-unneeded $MODULES_DIR/*.ko
 
 	# Sign modules
+	mkdir $KBUILD_OUTPUT/certs
+	cp ${KERNEL_DIR}/certs/signing_key.pem $KBUILD_OUTPUT/certs
 	find $MODULES_DIR -name '*.ko' -exec $KBUILD_OUTPUT/scripts/sign-file sha512 $KBUILD_OUTPUT/certs/signing_key.pem ${KERNEL_DIR}/certs/signing_key.x509 {} \;
 }
 
@@ -111,7 +112,9 @@ case "$choice" in
         export CROSS_COMPILE=${HOME}/android/source/toolchains/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
         break;;
     "clang7")
-        export CROSS_COMPILE=${HOME}/android/source/toolchains/clang-r328903/bin/clang
+        export CC=${HOME}/android/source/toolchains/clang-r328903/bin/clang
+        export CLANG_TRIPLE=aarch64-linux-gnu-
+        export CROSS_COMPILE=${HOME}/android/source/toolchains/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
         break;;
 
 esac

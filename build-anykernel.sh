@@ -25,7 +25,7 @@ VARIANT="OP5-OOS-O-EAS"
 
 # Kernel zip name
 HASH=`git rev-parse --short=8 HEAD`
-KERNEL_ZIP="RenderZenith-$VARIANT-$(date +%y%m%d)-chandr1000-$HASH" 
+KERNEL_ZIP="RenderZenith-$VARIANT-$(date +%y%m%d)-chandr1000" 
 
 # Vars
 export LOCALVERSION=~`echo $VER`
@@ -65,6 +65,7 @@ function clean_all {
 
 function make_kernel {
         echo
+        make CLANG_TRIPLE=aarch64-linux-gnu-
         make O=${KBUILD_OUTPUT} $DEFCONFIG
         make O=${KBUILD_OUTPUT} $THREAD
 }
@@ -100,7 +101,7 @@ echo "RenderZenith creation script:"
 echo -e "${restore}"
 
 echo "Pick Toolchain..."
-select choice in gcc-linaro-6.4.1-2018.05-x86_64_aarch64-linux-gnu gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu
+select choice in gcc-linaro-6.4.1-2018.05-x86_64_aarch64-linux-gnu gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu clang7
 do
 case "$choice" in
     "gcc-linaro-6.4.1-2018.05-x86_64_aarch64-linux-gnu")
@@ -108,6 +109,9 @@ case "$choice" in
         break;;
     "gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu")
         export CROSS_COMPILE=${HOME}/android/source/toolchains/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
+        break;;
+    "clang7")
+        export CROSS_COMPILE=${HOME}/android/source/toolchains/clang-r328903/bin/clang
         break;;
 
 esac

@@ -40,6 +40,7 @@ export CCACHE=ccache
 KERNEL_DIR=`pwd`
 KBUILD_OUTPUT="${HOME}/out"
 REPACK_DIR="${HOME}/android/source/kernel/AnyKernel2"
+CLANG_TOOLCHAIN_DIR="/usr/lib/llvm-7/bin/clang"
 PATCH_DIR="${HOME}/android/source/kernel/AnyKernel2/patch"
 MODULES_DIR="${HOME}/android/source/kernel/AnyKernel2/ramdisk/renderzenith/modules"
 ZIP_MOVE="${HOME}"
@@ -112,7 +113,7 @@ case "$choice" in
         export CROSS_COMPILE=${HOME}/android/source/toolchains/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
         break;;
     "clang7")
-        export CC=${HOME}/android/source/toolchains/clang-r328903/bin/clang
+        export CC=${CLANG_TOOLCHAIN_DIR}
         export CLANG_TRIPLE=aarch64-linux-gnu-
         export CROSS_COMPILE=${HOME}/android/source/toolchains/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
         break;;

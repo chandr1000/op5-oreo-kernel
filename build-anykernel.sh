@@ -25,7 +25,7 @@ VARIANT="OP5-OOS-O-EAS"
 
 # Kernel zip name
 HASH=`git rev-parse --short=8 HEAD`
-KERNEL_ZIP="RenderZenith-$VARIANT-$(date +%y%m%d)-chandr1000" 
+KERNEL_ZIP="RenderZenith-$VARIANT-$(date +%y%m%d)-chandr1000"
 
 # Vars
 export LOCALVERSION=~`echo $VER`
@@ -113,9 +113,13 @@ case "$choice" in
         export CROSS_COMPILE=${HOME}/android/source/toolchains/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
         break;;
     "clang7")
-        export CC=${CLANG_TOOLCHAIN_DIR}
-        export CLANG_TRIPLE=aarch64-linux-gnu-
-        export CROSS_COMPILE=${HOME}/android/source/toolchains/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
+    # Clang configurations
+    export CLANG_TCHAIN=${CLANG_TOOLCHAIN_DIR}
+    export TCHAIN_PATH=${HOME}/android/source/toolchains/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
+    export CLANG_TRIPLE=${TCHAIN_PATH}
+    # Kbuild Sets
+    export CROSS_COMPILE=${TCHAIN_PATH}
+    export MAKE="make CC=/usr/lib/llvm-7/bin/clang CLANG_TRIPLE=${TCHAIN_PATH} CROSS_COMPILE=${TCHAIN_PATH}"
         break;;
 
 esac

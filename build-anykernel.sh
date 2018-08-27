@@ -25,7 +25,7 @@ VARIANT="OP5-OOS-O-EAS"
 
 # Kernel zip name
 HASH=`git rev-parse --short=8 HEAD`
-KERNEL_ZIP="RenderZenith-$VARIANT-$(date +%y%m%d)-chandr1000"
+KERNEL_ZIP="RenderZenith-$VARIANT-$(date +%y%m%d)-chandr1000" 
 
 # Vars
 export LOCALVERSION=~`echo $VER`

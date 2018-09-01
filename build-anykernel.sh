@@ -20,7 +20,7 @@ KERNEL="Image.gz-dtb"
 DEFCONFIG="oneplus5_defconfig"
 
 # Kernel Details
-VER="RenderZenith v3.5.2"
+VER="RenderZenith v3.6.0"
 VARIANT="OP5-OOS-O-EAS"
 
 # Kernel zip name
@@ -49,6 +49,8 @@ ZIMAGE_DIR="$KBUILD_OUTPUT/arch/arm64/boot"
 # Functions
 function checkout_ak2_branches {
         cd $REPACK_DIR
+        git fetch --all --prune
+        git pull --prune
         git checkout rk-op5-oos-o
         cd $KERNEL_DIR
 }
@@ -59,9 +61,10 @@ function clean_all {
         rm -rf $KERNEL
         rm -rf $DTBIMAGE
         rm -rf zImage
+        rm -Rf $KBUILD_OUTPUT/*
         cd $KERNEL_DIR
         echo
-        make O=${KBUILD_OUTPUT} clean && make O=${KBUILD_OUTPUT} mrproper
+        # make O=${KBUILD_OUTPUT} clean && make O=${KBUILD_OUTPUT} mrproper
 }
 
 function make_kernel {
@@ -103,7 +106,7 @@ echo "RenderZenith creation script:"
 echo -e "${restore}"
 
 echo "Pick Toolchain..."
-select choice in gcc-linaro-6.4.1-2018.05-x86_64_aarch64-linux-gnu gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu clang7
+select choice in gcc-linaro-6.4.1-2018.05-x86_64_aarch64-linux-gnu gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu Clang
 do
 case "$choice" in
     "gcc-linaro-6.4.1-2018.05-x86_64_aarch64-linux-gnu")
@@ -112,14 +115,14 @@ case "$choice" in
     "gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu")
         export CROSS_COMPILE=${HOME}/android/source/toolchains/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
         break;;
-    "clang7")
+    "Clang")
     # Clang configurations
     export CLANG_TCHAIN=${CLANG_TOOLCHAIN_DIR}
     export TCHAIN_PATH=${HOME}/android/source/toolchains/gcc-linaro-7.3.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
     export CLANG_TRIPLE=${TCHAIN_PATH}
     # Kbuild Sets
     export CROSS_COMPILE=${TCHAIN_PATH}
-    export MAKE="make CC=/usr/lib/llvm-7/bin/clang CLANG_TRIPLE=${TCHAIN_PATH} CROSS_COMPILE=${TCHAIN_PATH}"
+    export MAKE="make CC=clang CLANG_TRIPLE=${TCHAIN_PATH} CROSS_COMPILE=${TCHAIN_PATH}"
         break;;
 
 esac

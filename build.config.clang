@@ -6,25 +6,25 @@ CCACHE=ccache
 
 # Kernel zip name
 HASH=`git rev-parse --short=8 HEAD`
-KERNEL_ZIP="RZ-$DEVICE-$(date +%y%m%d)-$HASH"
+KERNEL_ZIP="RenderZenith-$DEVICE-$(date +%y%m%d)-chandr1000"
 
 # Vars
 export ARCH=arm64
 export DEFCONFIG="oneplus5_defconfig"
-export KBUILD_BUILD_USER=joshuous
-export KBUILD_BUILD_HOST=RenderZenith
-export CROSS_COMPILE=$HOME/kernel/toolchains/gcc-linaro-7.3.1/bin/aarch64-linux-gnu-
+export KBUILD_BUILD_USER=Shinakawa
+export KBUILD_BUILD_HOST=chandr1000.ga
+export CROSS_COMPILE=${HOME}/android/source/toolchains/gcc-linaro-6.4.1-2018.05-x86_64_aarch64-linux-gnu/bin/aarch64-linux-gnu-
 export LOCALVERSION=~`echo $KERNEL_ZIP`
 
 # Clang
-CC="$HOME/kernel/toolchains/clang-7.x/bin/clang" # Path to clang executable
+CC="clang" # Path to clang executable
 CLANG_TRIPLE="aarch64-linux-gnu-"
 
 # Paths
-KBUILD_OUTPUT="../out_$DEVICE"
-AK2_DIR="$HOME/kernel/AnyKernel2_$DEVICE"
-MODULES_DIR="$AK2_DIR/ramdisk/renderzenith/modules"
-ZIP_MOVE="$HOME/www/kernels/$DEVICE"
+KBUILD_OUTPUT="${HOME}/out"
+AK2_DIR="${HOME}/android/source/kernel/AnyKernel2"
+MODULES_DIR="${HOME}/android/source/kernel/AnyKernel2/ramdisk/renderzenith"
+ZIP_MOVE="$HOME/$DEVICE"
 ZIMAGE_DIR="$KBUILD_OUTPUT/arch/$ARCH/boot"
 
 # Modules in vendor/lib/modules

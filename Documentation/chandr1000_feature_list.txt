@@ -1,3 +1,7 @@
 Customization list:
 
+=> Adreno Idler
 => maple-iosched
+=> sioplus scheduler
+=> Battery: Smart Charge - A simple fast charge (USB) interface
+=> UDF filesystem support

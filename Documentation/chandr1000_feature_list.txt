@@ -3,5 +3,6 @@ Customization list:
 => Adreno Idler
 => maple-iosched
 => sioplus scheduler
-=> Battery: Smart Charge - A simple fast charge (USB) interface
+=> Battery: Smart Charge - A simple fast charge (USB) interface (disabled by default)
 => UDF filesystem support
+=> Adreno Booster (disabled by default)

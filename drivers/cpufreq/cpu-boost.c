@@ -27,6 +27,9 @@
 #ifdef CONFIG_STATE_NOTIFIER
 #include <linux/state_notifier.h>
 #endif
+#include <linux/cpu_boost.h>
+
+#include "../../kernel/sched/sched.h"
 
 struct cpu_sync {
 	int cpu;
@@ -140,6 +143,18 @@ static int boost_adjust_notify(struct notifier_block *nb, unsigned long val,
 		if (!ib_min)
 			break;
 
+		ib_min = min((s->input_boost_min == UINT_MAX ?
+				policy->max : s->input_boost_min), policy->max);
+
+		/*
+		 * If we're not resetting the boost and if the new boosted freq
+		 * is below or equal to the current min freq, bail early
+		 */
+		if (ib_min) {
+			if (ib_min <= policy->min)
+				break;
+		}
+
 		pr_debug("CPU%u policy min before boost: %u kHz\n",
 			 cpu, policy->min);
 		pr_debug("CPU%u boost min: %u kHz\n", cpu, ib_min);
@@ -196,10 +211,35 @@ static void do_input_boost_rem(struct work_struct *work)
 
 }
 
+void do_input_boost_max()
+{
+	unsigned int i;
+	struct cpu_sync *i_sync_info;
+
+	if (!cpu_boost_worker_thread)
+		return;
+
+	cancel_delayed_work_sync(&input_boost_rem);
+
+	for_each_possible_cpu(i) {
+		i_sync_info = &per_cpu(sync_info, i);
+		i_sync_info->input_boost_min = UINT_MAX;
+	}
+
+	update_policy_online();
+
+	queue_delayed_work(system_power_efficient_wq,
+		&input_boost_rem, msecs_to_jiffies(
+			input_boost_ms < 1500 ? 1500 : input_boost_ms));
+}
+
 static void do_input_boost(struct kthread_work *work)
 {
 	unsigned int i, ret;
 	struct cpu_sync *i_sync_info;
+
+	if (!input_boost_ms)
+		return;
 
 	cancel_delayed_work_sync(&input_boost_rem);
 
@@ -212,6 +252,17 @@ static void do_input_boost(struct kthread_work *work)
 	pr_debug("Setting input boost min for all CPUs\n");
 	for_each_possible_cpu(i) {
 		i_sync_info = &per_cpu(sync_info, i);
+
+		// cpu 0-3 -> silver cluster
+		// cpu 4-7 -> gold cluster
+		// to save power there's no point in boosting the
+		// gold cluster core if it doesn't have any runnable
+		// thread at this point in time
+		// since inputs are fairly common we might save some
+		// juice in the long run
+		if (i >= 4 && cpu_rq(i)->nr_running == 0)
+			continue;
+
 		i_sync_info->input_boost_min = i_sync_info->input_boost_freq;
 	}
 
@@ -242,7 +293,7 @@ static void cpuboost_input_event(struct input_handle *handle,
 		return;
 
 	now = ktime_to_us(ktime_get());
-	if (now - last_input_time < MIN_INPUT_INTERVAL)
+	if ((now - last_input_time) < (input_boost_ms * USEC_PER_MSEC))
 		return;
 
 	if (queuing_blocked(&cpu_boost_worker, &input_boost_work))

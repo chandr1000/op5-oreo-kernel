@@ -13,6 +13,7 @@
 
 #define pr_fmt(fmt) "simple_lmk: " fmt
 
+#include <linux/cpu_boost.h>
 #include <linux/mm.h>
 #include <linux/moduleparam.h>
 #include <linux/oom.h>
@@ -107,6 +108,8 @@ static unsigned long do_lmk_reclaim(unsigned long pages_needed)
 {
 	unsigned long pages_freed = 0;
 	int i;
+
+	do_input_boost_max();
 
 	for (i = 1; i < ARRAY_SIZE(adj_prio); i++) {
 		pages_freed += scan_and_kill(adj_prio[i], adj_prio[i - 1],

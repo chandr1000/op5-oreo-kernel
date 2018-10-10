@@ -56,7 +56,7 @@ static inline void check_for_migration(struct rq *rq, struct task_struct *p) { }
  * Really only required when CONFIG_FAIR_GROUP_SCHED is also set, but to
  * increase coverage and consistency always enable it on 64bit platforms.
  */
-#if 0
+#ifdef CONFIG_64BIT
 # define SCHED_LOAD_RESOLUTION	10
 # define scale_load(w)		((w) << SCHED_LOAD_RESOLUTION)
 # define scale_load_down(w)	((w) >> SCHED_LOAD_RESOLUTION)

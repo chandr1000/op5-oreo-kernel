@@ -78,6 +78,7 @@
 #include <linux/compiler.h>
 #include <linux/sysctl.h>
 #include <linux/cpu_boost.h>
+#include <linux/devfreq_boost.h>
 
 #include <asm/pgtable.h>
 #include <asm/pgalloc.h>
@@ -1495,6 +1496,9 @@ static struct task_struct *copy_process(unsigned long clone_flags,
 	p->sequential_io	= 0;
 	p->sequential_io_avg	= 0;
 #endif
+#ifdef CONFIG_ANDROID_SIMPLE_LMK
+	p->lmk_sigkill_sent = false;
+#endif
 
 	/* Perform scheduler related setup. Assign this task to a CPU. */
 	retval = sched_fork(clone_flags, p);
@@ -1782,8 +1786,11 @@ long _do_fork(unsigned long clone_flags,
 	int trace = 0;
 	long nr;
 
-	if (is_zygote_pid(current->pid))
+	/* Boost CPU to the max for 1250 ms when userspace launches an app */
+	if (is_zygote_pid(current->pid)) {
 		do_input_boost_max();
+		devfreq_boost_kick_max(DEVFREQ_MSM_CPUBW, 1250);
+	}
 
 	/*
 	 * Determine whether and which event to report to ptracer.  When
